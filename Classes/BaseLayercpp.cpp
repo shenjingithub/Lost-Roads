@@ -2,7 +2,7 @@
 
 bool BaseLayer::init()
 {
-	if(!Layer::init)
+	if(!Layer::init())
 	{
 		return false;
 	}
@@ -12,6 +12,7 @@ bool BaseLayer::init()
 	auto bg=TMXTiledMap::create("hd/map/red_bg.tmx");
 	this->addChild(bg);
 	
+
 	auto glassSprite=Sprite::createWithSpriteFrameName("setting.glass.png");
 	glassSprite->setPosition(Vec2(visibleSize.width-glassSprite->getContentSize().width/2,160));
 	this->addChild(glassSprite);

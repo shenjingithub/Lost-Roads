@@ -68,7 +68,7 @@ string MyUtility::getUTF8Char(const string key)
 	Value value=map[key];
 
 	if(value.isNull()){
-		log("%s doesn't exist."key.c_str());
+		log("%s doesn't exist.",key.c_str());
 		return "";
 	}
 	return value.asString();

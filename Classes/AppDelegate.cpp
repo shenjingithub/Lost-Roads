@@ -27,21 +27,28 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
 	//屏幕大小
-	auto screenSize=glview->getFrameSize();
-
+	//auto screenSize=glview->getFrameSize();
+	glview->setFrameSize(640,960);
+	auto screenSize=Size(640,960);
 	//设计分辨率
 	auto designSize=Size(320,480);
 
+
 	//资源大小
-	auto resourceSize=Size(320,480);
+	auto resourceSize=Size(640,960);
 
 	std::vector<std::string> SearchPaths;
 
-	if(screenSize.height>960)
+	/*if(screenSize.height>960)
 	{
 		designSize=Size(320,568);
 		resourceSize=Size(640,1136);
-		SearchPaths.push_back("hd5");
+		SearchPaths.push_back("hd5"); ////////////////////////
+	}*/
+	if(screenSize.height>960)
+	{
+		designSize=Size(320,568);
+		SearchPaths.push_back("hd");
 	}
 	else if(screenSize.height>480)
 	{
