@@ -1,4 +1,6 @@
 #include "HelloWorldScene.h"
+#include "HomeScene.h"
+#include "stdio.h"
 
 USING_NS_CC;
 
@@ -30,6 +32,7 @@ bool HelloWorld::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("texture/loading_texture.plist");
 
 	auto bg=TMXTiledMap::create("map/red_bg.tmx");
@@ -37,7 +40,7 @@ bool HelloWorld::init()
 
 	auto logo=Sprite::createWithSpriteFrameName("logo.png");
 	this->addChild(logo);
-	logo->setPosition(visibleSize/2);
+	logo->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
 
 	auto sprite=Sprite::createWithSpriteFrameName("loding4.png");
 	this->addChild(sprite);
@@ -45,9 +48,9 @@ bool HelloWorld::init()
 
    //////////////////////////////设置动画//////////////////////////////
 	Animation *animation=Animation::create();
-	for(int i=0; i<4;i++)
+	for(int i=1; i<=4;i++)
 	{
-		String *framename=String::createWithFormat("loding%d.png",i);
+		__String *framename=__String::createWithFormat("loding%d.png",i);
 		
 		SpriteFrame *spriteframe=SpriteFrameCache::getInstance()->getSpriteFrameByName(framename->getCString());
 
@@ -58,20 +61,77 @@ bool HelloWorld::init()
 	
 	Animate* animate=Animate::create(animation);
 	sprite->runAction(RepeatForever::create(animate));
+	////////////////////////////////////////////////////////////////////////
+
+	///////////////////////////异步加载图片////////////////////////////////
+
+	m_nNumberofloaded=0;
+	Director::getInstance()->getTextureCache()->addImageAsync("texture/home_texture.png",
+																CC_CALLBACK_1(HelloWorld::loadingTextureCallBack,this));
+
+	Director::getInstance()->getTextureCache()->addImageAsync("texture/setting_texture.png",
+																CC_CALLBACK_1(HelloWorld::loadingTextureCallBack,this));
+	Director::getInstance()->getTextureCache()->addImageAsync("texture/gameplay_texture.png",
+																CC_CALLBACK_1(HelloWorld::loadingTextureCallBack,this));
+
+	/////////////////////////////////////////////////////////////////////
+
+
+	////////////////////////异步加载声音//////////////////////////////////
+
+	_loadingAudioThread=new std::thread(&HelloWorld::LoadingAudio,this);
+
+////////////////////////////////////////////////////////////////////////
     return true;
+///////////////////////////////////////////////////////////////////////
+
+
+
 }
 
 
-void HelloWorld::menuCloseCallback(Ref* pSender)
+void HelloWorld::loadingTextureCallBack(Texture2D* texture)
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
-    return;
-#endif
+	switch(m_nNumberofloaded++)
+	{
+		case 0:
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("texture/home_texture.plist",texture);
+			break;
+		case 1:
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("texture/setting_texture.plist",texture);
+			break;
+		case 2:
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("texture/gameplay_texture.plist",texture);
+			this->schedule(schedule_selector(HelloWorld::delayCall),1,1,3);
+			break;
 
-    Director::getInstance()->end();
+	}
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif
+
+
+}
+
+void HelloWorld::delayCall(float dt)
+{
+	auto sc=HomeSceneLayer::createScene();
+	Director::getInstance()->replaceScene(sc);
+
+}
+
+void HelloWorld::LoadingAudio()
+{
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic(bg_music_1);
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic(bg_music_2);
+}
+
+void HelloWorld::onExit()
+{
+	Layer::onExit();
+	_loadingAudioThread->join();
+	CC_SAFE_DELETE(_loadingAudioThread);
+/////////////////清理loading缓存//////////////////////
+	SpriteFrameCache::getInstance()->removeSpriteFramesFromFile("texture/loading_texture.png");
+	Director::getInstance()->getTextureCache()->removeTextureForKey("texture/loading_texture.png");
+
+	this->unschedule(schedule_selector(HelloWorld::delayCall));
 }
