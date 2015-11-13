@@ -8,9 +8,9 @@ typedef enum{
 }ActionType;
 
 #include "cocos2d.h"
-
-
-
+#include "SettingLayer.h"
+#include "HelpLayer.h"
+#include "GamePlayerLayer.h"
 #include "SystemHeader.h"
 
 class HomeSceneLayer : public cocos2d::Layer
