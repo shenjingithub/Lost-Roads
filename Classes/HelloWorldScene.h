@@ -21,7 +21,7 @@ public:
     
     void delayCall(float dt);
 
-	void loadingTextureCallBack(Texture2D* texture);
+	void loadingTextureCallBack(cocos2d::Texture2D* texture);
 
 	void LoadingAudio();
 

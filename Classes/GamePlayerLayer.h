@@ -3,8 +3,9 @@
 
 #include "cocos2d.h"
 #include "SystemHeader.h"
+#include "BaseLayer.h"
 
-class GamePlayerLayer : public cocos2d::Layer
+class GamePlayerLayer : public BaseLayer
 {
 public:
 	static cocos2d::Scene* createScene();
