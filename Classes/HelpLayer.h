@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 #include "SystemHeader.h"
 #include "BaseLayer.h"
+#include "MyUtility.h"
 
 class HelpLayer : public BaseLayer
 {

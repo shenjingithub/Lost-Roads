@@ -16,8 +16,8 @@
 
 #define bg_music_1 "sound/home_bg.mp3"
 #define bg_music_2 "sound/game_bg.mp3"
-#define sound_1 "sound/Blip.wave"
-#define sound_2 "sound/Explosion.wave"
+#define sound_1 "sound/Blip.wav"
+#define sound_2 "sound/Explosion.wav"
 
 #endif
 
