@@ -2,23 +2,23 @@
 
 bool BaseLayer::init()
 {
-	if(!Layer::init())
+	if(!cocos2d::Layer::init())
 	{
 		return false;
 	}
 	Size visibleSize=Director::getInstance()->getVisibleSize();
 	Vec2 origin=Director::getInstance()->getVisibleOrigin();
 
-	auto bg=TMXTiledMap::create("hd/map/red_bg.tmx");
+	auto bg=TMXTiledMap::create("map/red_bg.tmx");
 	this->addChild(bg);
 	
 
-	auto glassSprite=Sprite::createWithSpriteFrameName("setting.glass.png");
+	auto glassSprite=Sprite::createWithSpriteFrameName("setting.glasses.png");
 	glassSprite->setPosition(Vec2(visibleSize.width-glassSprite->getContentSize().width/2,160));
 	this->addChild(glassSprite);
 
 	auto handSprite=Sprite::createWithSpriteFrameName("setting.hand.png");
-	handSprite->setPosition(Vec2(visibleSize.width-handSprite->getContentSize().width/2,60));
+	handSprite->setPosition(Vec2(handSprite->getContentSize().width/2,60));
 	this->addChild(handSprite);
 
 	auto okNormal=Sprite::createWithSpriteFrameName("setting.button.ok.png");

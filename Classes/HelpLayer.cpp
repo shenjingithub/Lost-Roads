@@ -12,7 +12,7 @@ Scene* HelpLayer::createScene()
 
 bool HelpLayer::init()
 {
-	if(!Layer::init())
+	if(!BaseLayer::init())
 	{
 		return false;
 	}

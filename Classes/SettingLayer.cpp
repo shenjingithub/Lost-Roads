@@ -14,7 +14,7 @@ Scene* SettingLayer::createScene()
 
 bool SettingLayer::init()
 {
-	if(!Layer::init())
+	if(!BaseLayer::init())
 	{
 		return false;
 	}

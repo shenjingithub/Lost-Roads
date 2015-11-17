@@ -5,7 +5,7 @@
 #include "SystemHeader.h"
 #include "BaseLayer.h"
 
-class GamePlayerLayer : public BaseLayer
+class GamePlayerLayer : public cocos2d::Layer
 {
 public:
 	static cocos2d::Scene* createScene();
