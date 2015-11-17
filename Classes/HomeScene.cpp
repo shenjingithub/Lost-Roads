@@ -76,13 +76,13 @@ void HomeSceneLayer::menuItemCallback(Ref* pSender)
 	switch(menuitem->getTag())
 	{
 	case ActionType::MenuItemStart:
-		//tsc=TransitionFade::create(1.0f,GamePlayerLayer::createScene());
+		tsc=TransitionFade::create(1.0f,GamePlayerLayer::createScene());
 		break;
 	case ActionType::MenuItemSetting:
 		tsc=TransitionFade::create(1.0f,SettingLayer::createScene());
 		break;
 	case ActionType::MenuItemHelp:
-		//tsc=TransitionFade::create(1.0f,HelpLayer::createScene());
+		tsc=TransitionFade::create(1.0f,HelpLayer::createScene());
 		break;
 	}
 	if(tsc)

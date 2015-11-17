@@ -28,7 +28,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	//屏幕大小
 	//auto screenSize=glview->getFrameSize();
-	glview->setFrameSize(640,960);
+	glview->setFrameSize(320,480);
 	auto screenSize=Size(640,960);
 	//设计分辨率
 	auto designSize=Size(320,480);
