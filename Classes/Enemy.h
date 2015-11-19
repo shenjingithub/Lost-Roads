@@ -21,7 +21,7 @@ class Enemy : public cocos2d::Sprite
 	CC_SYNTHESIZE(cocos2d::Vec2,velocity,Velocity);				//速度
 
 public:
-	Enemy(EnemyTypes enemyType): enemyType(enemyType),initialHitPoints(1),velocity(cocos2d::Vec2(2,2)){};//Enemy(EnemyTypes enemyType);
+	Enemy(EnemyTypes enemyType): enemyType(enemyType),initialHitPoints(1),velocity(cocos2d::Vec2::ZERO){};//Enemy(EnemyTypes enemyType);
 
 	void spawn();												//产生敌人函数
 	virtual void update(float dt);								//游戏循环调用的默认函数
