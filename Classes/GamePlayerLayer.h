@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "SystemHeader.h"
 #include "BaseLayer.h"
+#include "Enemy.h"
 
 class GamePlayerLayer : public cocos2d::Layer
 {

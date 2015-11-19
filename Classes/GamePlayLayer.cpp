@@ -17,12 +17,9 @@ bool GamePlayerLayer::init()
 	{
 		return false;
 	}
-
-
-
-
-
-
+	auto planet=Enemy::createWithEnemyTypes(EnemyTypePlanet);
+	
+	this->addChild(planet);
 
 	return true;
 }

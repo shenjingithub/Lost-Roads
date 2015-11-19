@@ -2,8 +2,8 @@
 
 #define Enemy_Stone "gameplay.stone1.png"
 #define Enemy_1 "gameplay.enemy-1.png"
-#define Enemy_2 "gamepaly.enemy-2.png"
-#define Enemy_plane "gamepaly.enemy.plane.png"
+#define Enemy_2 "gameplay.enemy-2.png"
+#define Enemy_plane "gameplay.enemy.planet.png"
 
 typedef enum
 {
@@ -21,7 +21,7 @@ class Enemy : public cocos2d::Sprite
 	CC_SYNTHESIZE(cocos2d::Vec2,velocity,Velocity);				//速度
 
 public:
-	Enemy(EnemyTypes enemyType): enemyType(enemyType),initialHitPoints(1),velocity(cocos2d::Vec2::ZERO){};//Enemy(EnemyTypes enemyType);
+	Enemy(EnemyTypes enemyType): enemyType(enemyType),initialHitPoints(1),velocity(cocos2d::Vec2(2,2)){};//Enemy(EnemyTypes enemyType);
 
 	void spawn();												//产生敌人函数
 	virtual void update(float dt);								//游戏循环调用的默认函数

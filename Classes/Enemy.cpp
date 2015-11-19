@@ -2,7 +2,7 @@
 
 USING_NS_CC;
 
-Enemy* EnemycreateWithEnemyTypes(EnemyTypes enemytype)
+Enemy* Enemy::createWithEnemyTypes(EnemyTypes enemytype)
 {
 	Enemy *enemy=new Enemy(enemytype);
 
@@ -76,18 +76,36 @@ Enemy* EnemycreateWithEnemyTypes(EnemyTypes enemytype)
 
 }
 
+
+
 void Enemy::update(float dt)
 {
+	switch(enemyType)
+	{
+	case EnemyTypeStone:
+		this->setRotation(this->getRotation()-0.5);
+		break;
+	case EnemyTypePlanet:
+		this->setRotation(this->getRotation()+1);
+		break;
+	}
+	Vec2 movelen=velocity*dt;
+	this->setPosition(this->getPosition()+movelen);
 
-
-
-
-
+	if(this->getPosition().y+this->getContentSize().height/2<0){
+			this->spawn();
+	}
 }
 
 void Enemy::spawn()
 {
+	Size screen=Director::getInstance()->getVisibleSize();
+	float yPos=screen.height+this->getContentSize().height/2;
+	float xPos=(screen.width-this->getContentSize().width)*CCRANDOM_0_1();
 
+	this->setPosition(Vec2(xPos,yPos));
+	this->setAnchorPoint(Vec2(0.5,0.5));
 
-
+	this->setHitPoints(this->getInitialHitPoints());
+	this->setVisible(true);
 }
