@@ -17,9 +17,36 @@ bool GamePlayerLayer::init()
 	{
 		return false;
 	}
-	auto planet=Enemy::createWithEnemyTypes(EnemyTypePlanet);
-	
-	this->addChild(planet);
+	this->BGinit();
 
 	return true;
+}
+
+
+void GamePlayerLayer::BGinit()
+{
+	Size visibleSize=Director::getInstance()->getVisibleSize();
+	auto bg=TMXTiledMap::create("map/blue_bg.tmx");
+	this->addChild(bg,0,GameSceneNodeBatchTagBackground);
+
+	ParticleSystem *ps=ParticleSystemQuad::create("particle/light.plist");
+	ps->setPosition(Vec2(visibleSize.width,visibleSize.height)/2);
+	this->addChild(ps,0,GameSceneNodeBatchTagBackground);
+
+
+}
+
+void GamePlayerLayer::onExit()
+{
+
+
+
+}
+
+void GamePlayerLayer::onEnterTransitionDidFinish()
+{
+
+
+
+
 }
