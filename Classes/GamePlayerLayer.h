@@ -29,6 +29,7 @@ public:
 	virtual bool init();
 	void BGinit();
 	virtual void onExit();
+	virtual void onEnter();
 	virtual void onEnterTransitionDidFinish();
 
 
