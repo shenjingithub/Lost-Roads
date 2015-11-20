@@ -81,14 +81,18 @@ void GamePlayerLayer::onEnter()
 	Planet1->setVelocity(Vec2(0,-50));
 	this->addChild(Planet1,10,GameSceneNodeBatchTagEnemy);
 
-	/*auto enemyFighter1=Enemy::createWithEnemyTypes(EnemyTypeEnemy1);
+	auto enemyFighter1=Enemy::createWithEnemyTypes(EnemyTypeEnemy1);
 	enemyFighter1->setVelocity(Vec2(0,-50));
 	this->addChild(enemyFighter1,10,GameSceneNodeBatchTagEnemy);
 
 	auto enemyFighter2=Enemy::createWithEnemyTypes(EnemyTypeEnemy2);
 	enemyFighter2->setVelocity(Vec2(0,-50));
 	this->addChild(enemyFighter2,10,GameSceneNodeBatchTagEnemy);
-	*/
+	
+	auto fighter=Fighter::createWithSpriteFrameName("gameplay.fighter.png");
+	fighter->setHitPoint(5);
+	fighter->setPosition(Vec2(visibleSize.width/2,70));
+	this->addChild(fighter,10,GameSceneNodeTagFighter);
 
 }
 

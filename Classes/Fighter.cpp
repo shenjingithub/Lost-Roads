@@ -5,14 +5,15 @@ USING_NS_CC;
 Fighter* Fighter::createWithSpriteFrameName(const char* spriteFrameName)
 {
 	Fighter* fighter=new Fighter();
-	if(fighter&&fighter->createWithSpriteFrameName(spriteFrameName)){
+	
+	if(fighter&&fighter->initWithSpriteFrameName(spriteFrameName)){
 		fighter->autorelease();
 
 		ParticleSystem *ps=ParticleSystemQuad::create("particle/fire.plist");
 	
 		//·É»úÏÂÃæ
 		ps->setPosition(Vec2(fighter->getContentSize().width/2,0));
-		ps->setRotation(180.0f);
+	//	ps->setRotation(180.0f);
 		ps->setScale(0.5f);
 		fighter->addChild(ps);
 		////////////////////////////////////////////////////////////////////
@@ -66,7 +67,7 @@ void Fighter::setPosition(const cocos2d::Vec2& newPosition)
 		pos_y=screenSize.height-halfHight;
 	}
 
-	Sprite::setPosition(pos_x,pos_y);
+	Sprite::setPosition(Vec2(pos_x,pos_y));
 	Sprite::setAnchorPoint(Vec2(0.5,0.5));
 }
 

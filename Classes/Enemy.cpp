@@ -28,7 +28,7 @@ Enemy* Enemy::createWithEnemyTypes(EnemyTypes enemytype)
 		break;
 	}
 
-	if(enemy&&enemy->createWithSpriteFrameName(enemyFramName))
+	if(enemy&&enemy->initWithSpriteFrameName(enemyFramName))
 	{
 		enemy->autorelease();
 		
