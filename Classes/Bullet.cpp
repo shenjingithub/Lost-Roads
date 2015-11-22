@@ -4,7 +4,7 @@ USING_NS_CC;
 Bullet* Bullet::createwithSpriteFrameName(const char* spriteFrameName)
 {
 	Bullet* bullet=new Bullet();
-	if(bullet&&bullet->createWithSpriteFrameName(spriteFrameName))
+	if(bullet&&bullet->initWithSpriteFrameName(spriteFrameName))
 	{
 		bullet->autorelease();
 	

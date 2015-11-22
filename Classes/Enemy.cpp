@@ -16,11 +16,11 @@ Enemy* Enemy::createWithEnemyTypes(EnemyTypes enemytype)
 		break;
 	case EnemyTypeEnemy1:
 		enemyFramName=Enemy_1;
-		enemy->setInitialHitPoints(5);
+		enemy->setInitialHitPoints(10);
 		break;
 	case EnemyTypeEnemy2:
 		enemyFramName=Enemy_2;
-		enemy->setInitialHitPoints(10);
+		enemy->setInitialHitPoints(5);
 		break;
 	case EnemyTypePlanet:
 		enemyFramName=Enemy_plane;
@@ -49,7 +49,7 @@ Enemy* Enemy::createWithEnemyTypes(EnemyTypes enemytype)
 				Vec2(55,-2.25)			};
 			body->addShape(PhysicsShapePolygon::create(verts,6));
 		}
-		else if(enemytype==EnemyTypeEnemy1)
+		else if(enemytype==EnemyTypeEnemy2)
 		{
 			Vec2 verts[]={
 				Vec2(1.25,32.25),

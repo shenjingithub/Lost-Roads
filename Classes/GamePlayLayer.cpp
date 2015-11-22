@@ -3,8 +3,12 @@ USING_NS_CC;
 
 Scene* GamePlayerLayer::createScene()
 {
-	auto scene=Scene::create();
+	auto scene=Scene::createWithPhysics();
+	PhysicsWorld* phyWorld=scene->getPhysicsWorld();
+	phyWorld->setGravity(Vect(0,0));
+
 	auto layer=GamePlayerLayer::create();
+
 	scene->addChild(layer);
 
 	return scene;
@@ -54,6 +58,7 @@ void GamePlayerLayer::onExit()
 {
 	Layer::onExit();
 	
+	Director::getInstance()->getEventDispatcher()->removeEventListener(touchFighterlistener);
 	auto nodes=this->getChildren();
 
 	for(const auto& node : nodes)
@@ -63,7 +68,7 @@ void GamePlayerLayer::onExit()
 				this->removeChild(node);
 			}
 		}
-
+	this->unschedule(schedule_selector(GamePlayerLayer::shootBullet));
 }
 
 
@@ -72,7 +77,13 @@ void GamePlayerLayer::onEnter()
 	Layer::onEnter();
 
 	Size visibleSize=Director::getInstance()->getVisibleSize();
-
+///////////////////////ÔÝÍ£
+	auto pauseSprite=Sprite::createWithSpriteFrameName("gameplay.button.pause.png");
+	auto menuItempause=MenuItemSprite::create(pauseSprite,pauseSprite,CC_CALLBACK_1(GamePlayerLayer::menuPauseCallback,this));
+	auto pauseMenu=Menu::create(menuItempause,NULL);
+	pauseMenu->setPosition(Vec2(30,visibleSize.height-28));
+	this->addChild(pauseMenu,20,999);
+///////////////////////
 	auto Stone1=Enemy::createWithEnemyTypes(EnemyTypeStone);
 	Stone1->setVelocity(Vec2(0,-100));
 	this->addChild(Stone1,10,GameSceneNodeBatchTagEnemy);
@@ -89,11 +100,84 @@ void GamePlayerLayer::onEnter()
 	enemyFighter2->setVelocity(Vec2(0,-50));
 	this->addChild(enemyFighter2,10,GameSceneNodeBatchTagEnemy);
 	
-	auto fighter=Fighter::createWithSpriteFrameName("gameplay.fighter.png");
+	fighter=Fighter::createWithSpriteFrameName("gameplay.fighter.png");
 	fighter->setHitPoint(5);
 	fighter->setPosition(Vec2(visibleSize.width/2,70));
 	this->addChild(fighter,10,GameSceneNodeTagFighter);
 
+	///×¢²á´¥Ãþ·É»úÊÂ¼þ¼àÌýÆ÷
+	touchFighterlistener=EventListenerTouchOneByOne::create();
+	touchFighterlistener->setSwallowTouches(true);
+	touchFighterlistener->onTouchBegan=[](Touch* touch,Event* event){
+		return true;
+	};
+	touchFighterlistener->onTouchMoved=[](Touch* touch,Event* event){
+		auto target=event->getCurrentTarget();
+		target->setPosition(target->getPosition()+touch->getDelta());  
+	};
+
+	touchFighterlistener->onTouchEnded=[](Touch* touch,Event* event){
+		
+	};
+
+	EventDispatcher* eventdispatcher=Director::getInstance()->getEventDispatcher();
+	eventdispatcher->addEventListenerWithSceneGraphPriority(touchFighterlistener,this->fighter);
+	//×¢²á¼ì²âÅö×²×¢²áÆ÷
+	contactListener=EventListenerPhysicsContact::create();
+	contactListener->onContactBegin=[this](PhysicsContact& contact){
+		auto spriteA=contact.getShapeA()->getBody()->getNode();
+		auto spriteB=contact.getShapeB()->getBody()->getNode();
+
+		////////////////////////////¼ì²â·É»úÓëµÐÈËÏà×²////////////////////////////////
+
+		Node* enemy1=nullptr;
+		if(spriteA->getTag()==GameSceneNodeTagFighter&&
+			spriteB->getTag()==GameSceneNodeBatchTagEnemy)
+		{
+			enemy1=spriteB;
+		}
+		if(spriteA->getTag()==GameSceneNodeBatchTagEnemy&&
+			spriteB->getTag()==GameSceneNodeTagFighter)
+		{
+			enemy1=spriteA;
+		}
+		if(enemy1!=nullptr)
+		{
+			this->handleFighterCollidingWithEnemy((Enemy*)enemy1);
+			return false;
+		
+		}
+		////////////////////////////¼ì²âÅÚµ¯ÓëµÐÈËÏà×²////////////////////////////////
+
+		Node* enemy2=nullptr;
+
+		if(spriteA->getTag()==GameSceneNodeBatchTagBullet&&
+			spriteB->getTag()==GameSceneNodeBatchTagEnemy)
+		{
+			if(!spriteA->isVisible())
+				return false;
+			spriteA->setVisible(false);
+			enemy2=spriteB;
+		}
+		if(spriteA->getTag()==GameSceneNodeBatchTagEnemy&&
+			spriteB->getTag()==GameSceneNodeBatchTagBullet)
+		{
+			if(!spriteB->isVisible())
+				return false;		
+			spriteB->setVisible(false);
+			enemy2=spriteA;
+		}
+		if(enemy2!=nullptr)
+		{
+			this->handleBulletCollidingWithEnemy((Enemy*)enemy2);
+			return false;
+		}
+		return false;
+	};
+	eventdispatcher->addEventListenerWithFixedPriority(contactListener,1);
+
+	//Ã¿0.2sµ÷ÓÃshootBulletº¯Êý·¢Éä1·¢ÅÚµ¯
+	this->schedule(schedule_selector(GamePlayerLayer::shootBullet),0.2f);
 }
 
 void GamePlayerLayer::onEnterTransitionDidFinish()
@@ -101,5 +185,135 @@ void GamePlayerLayer::onEnterTransitionDidFinish()
 	Layer::onEnterTransitionDidFinish();
 
 
+
+}
+
+void GamePlayerLayer::shootBullet(float dt)
+{
+	if(fighter&&fighter->isVisible())
+	{
+		Bullet* bullet=Bullet::createwithSpriteFrameName("gameplay.bullet.png");	
+		bullet->setVelocity(Vec2(0,GameSceneBulletVelocity));
+		this->addChild(bullet,0,GameSceneNodeBatchTagBullet);
+		bullet->shootBulletFromFighter(fighter);
+	
+	}
+		
+}
+
+void GamePlayerLayer::handleBulletCollidingWithEnemy(Enemy* enemy)
+{
+	enemy->setHitPoints(enemy->getHitPoints()-1);
+	if(enemy->getHitPoints()<=0)
+	{
+		/// ±¬Õ¨ºÍÒôÐ§
+		Node* node=this->getChildByTag(GameSceneNodeTagExplosionParticleSystem);
+		if(node){
+			this->removeChild(node);
+		}
+		ParticleSystem* explosion=ParticleSystemQuad::create("particle/explosion.plist");
+		explosion->setPosition(enemy->getPosition());
+		this->addChild(explosion,2,GameSceneNodeTagExplosionParticleSystem);
+		if(UserDefault::getInstance()->getBoolForKey(SOUND_KEY)){
+		
+			SimpleAudioEngine::getInstance()->playEffect(sound_2);
+		}
+		enemy->setVisible(false);
+		enemy->spawn();
+	}
+	
+}
+
+void GamePlayerLayer::handleFighterCollidingWithEnemy(Enemy* enemy)
+{
+
+	fighter->setHitPoint(fighter->getHitPoint()-1);
+	////×²ÉÏ·É»úÖ±½Ó½áÊø
+		Node* node=this->getChildByTag(GameSceneNodeTagExplosionParticleSystem);
+		if(node){
+			this->removeChild(node);
+		}
+		ParticleSystem* explosion=ParticleSystemQuad::create("particle/explosion.plist");
+		explosion->setPosition(enemy->getPosition());
+		this->addChild(explosion,2,GameSceneNodeTagExplosionParticleSystem);
+		if(UserDefault::getInstance()->getBoolForKey(SOUND_KEY)){
+		
+			SimpleAudioEngine::getInstance()->playEffect(sound_2);
+		}
+		enemy->setVisible(false);
+		enemy->spawn();
+	////////////////
+	
+	if(fighter->getHitPoint()<=0)
+	{
+	
+	
+	
+	}
+	else{
+	
+	
+	
+	
+	}
+
+
+
+
+}
+
+void GamePlayerLayer::menuPauseCallback(Ref* pSender)
+{
+	Size visibleSzie=Director::getInstance()->getVisibleSize();
+
+	if(UserDefault::getInstance()->getBoolForKey(SOUND_KEY))
+	{
+		SimpleAudioEngine::getInstance()->playEffect(sound_1);
+	}
+
+	this->pause();
+	for(const auto& node : this->getChildren())
+	{
+		node->pause();
+	}
+
+	auto backNormal=Sprite::createWithSpriteFrameName("gameplay.button.back.png");
+	auto backSelect=Sprite::createWithSpriteFrameName("gameplay.button.back-on.png");
+	auto backMenuItem=MenuItemSprite::create(backNormal,backSelect,CC_CALLBACK_1(GamePlayerLayer::menuBackCallback,this));
+
+	auto resumeNormal=Sprite::createWithSpriteFrameName("gameplay.button.resume.png");
+	auto resumeSelect=Sprite::createWithSpriteFrameName("gameplay.button.resume-on.png");
+	auto resumeMenuItem=MenuItemSprite::create(resumeNormal,resumeSelect,CC_CALLBACK_1(GamePlayerLayer::menuResumeCallback,this));
+
+	menu=Menu::create(backMenuItem,resumeMenuItem,NULL);
+	menu->alignItemsVertically();
+	menu->setPosition(Vec2(visibleSzie/2));
+	this->addChild(menu,20,100);
+
+}
+
+
+void GamePlayerLayer::menuBackCallback(Ref* pSender)
+{
+	Director::getInstance()->popScene();
+	if(UserDefault::getInstance()->getBoolForKey(SOUND_KEY))
+	{
+		SimpleAudioEngine::getInstance()->playEffect(sound_1);
+	}
+}
+
+void GamePlayerLayer::menuResumeCallback(Ref* pSender)
+{
+	if(UserDefault::getInstance()->getBoolForKey(SOUND_KEY))
+	{
+		SimpleAudioEngine::getInstance()->playEffect(sound_1);
+	}
+
+	this->resume();
+	for(const auto& node : this->getChildren())
+	{
+		node->resume();
+	}
+	removeChild(menu);
 
 }

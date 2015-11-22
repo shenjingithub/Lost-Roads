@@ -24,6 +24,11 @@
 
 class GamePlayerLayer : public cocos2d::Layer
 {
+	Fighter* fighter;
+	Menu* menu;
+	EventListenerTouchOneByOne*  touchFighterlistener;
+	EventListenerPhysicsContact* contactListener;
+
 public:
 	static cocos2d::Scene* createScene();
 	virtual bool init();
@@ -32,6 +37,13 @@ public:
 	virtual void onEnter();
 	virtual void onEnterTransitionDidFinish();
 
+	void shootBullet(float dt);
+
+	void handleBulletCollidingWithEnemy(Enemy* enemy);
+	void handleFighterCollidingWithEnemy(Enemy* enemy);
+	void menuPauseCallback(cocos2d::Ref* pSender);
+	void menuBackCallback(cocos2d::Ref* pSender);
+	void menuResumeCallback(cocos2d::Ref* pSender);
 
 	CREATE_FUNC(GamePlayerLayer);
 
