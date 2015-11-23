@@ -246,7 +246,8 @@ void GamePlayerLayer::handleFighterCollidingWithEnemy(Enemy* enemy)
 	
 	if(fighter->getHitPoint()<=0)
 	{
-	
+		auto sc=GameOver::createScene();
+		Director::getInstance()->replaceScene(sc);
 	
 	
 	}

@@ -48,6 +48,7 @@
     <ClCompile Include="..\Classes\Bullet.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameOver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -89,6 +90,7 @@
     <ClInclude Include="..\Classes\Bullet.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\GameOver.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

@@ -20,7 +20,7 @@
 #include "Enemy.h"
 #include "Fighter.h"
 #include "Bullet.h"
-
+#include "GameOver.h"
 
 class GamePlayerLayer : public cocos2d::Layer
 {
