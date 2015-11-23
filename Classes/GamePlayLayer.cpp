@@ -105,6 +105,8 @@ void GamePlayerLayer::onEnter()
 	fighter->setPosition(Vec2(visibleSize.width/2,70));
 	this->addChild(fighter,10,GameSceneNodeTagFighter);
 
+	this->updateStatusBarFighter();
+	this->updateStatusBarScore();
 	///注册触摸飞机事件监听器
 	touchFighterlistener=EventListenerTouchOneByOne::create();
 	touchFighterlistener->setSwallowTouches(true);
@@ -204,6 +206,7 @@ void GamePlayerLayer::shootBullet(float dt)
 void GamePlayerLayer::handleBulletCollidingWithEnemy(Enemy* enemy)
 {
 	enemy->setHitPoints(enemy->getHitPoints()-1);
+	
 	if(enemy->getHitPoints()<=0)
 	{
 		/// 爆炸和音效
@@ -218,16 +221,46 @@ void GamePlayerLayer::handleBulletCollidingWithEnemy(Enemy* enemy)
 		
 			SimpleAudioEngine::getInstance()->playEffect(sound_2);
 		}
+		switch(enemy->getEnemyType())
+		{
+		case EnemyTypeStone:
+			score+=EnemyStone_score;
+			scorePlaceholder+=EnemyStone_score;
+			break;
+		case EnemyTypeEnemy1:
+			score+=Enemy1_score;
+			scorePlaceholder+=Enemy1_score;
+			break;
+		case EnemyTypeEnemy2:
+			score+=Enemy2_score;
+			scorePlaceholder+=Enemy2_score;
+			break;
+		case EnemyTypePlanet:
+			score+=EnemyPlanet_score;
+			scorePlaceholder+=EnemyPlanet_score;
+			break;
+		
+		}
+
+		if(scorePlaceholder>=1000)
+		{
+			fighter->setHitPoint(fighter->getHitPoint()+1);
+			this->updateStatusBarFighter();
+			scorePlaceholder-=1000;
+		}
+		this->updateStatusBarScore();
 		enemy->setVisible(false);
 		enemy->spawn();
+
 	}
 	
 }
 
 void GamePlayerLayer::handleFighterCollidingWithEnemy(Enemy* enemy)
 {
-
+	Size visibleSize=Director::getInstance()->getVisibleSize();
 	fighter->setHitPoint(fighter->getHitPoint()-1);
+	this->updateStatusBarFighter();
 	////撞上飞机直接结束
 		Node* node=this->getChildByTag(GameSceneNodeTagExplosionParticleSystem);
 		if(node){
@@ -252,9 +285,11 @@ void GamePlayerLayer::handleFighterCollidingWithEnemy(Enemy* enemy)
 	
 	}
 	else{
-	
-	
-	
+		fighter->setPosition(Vec2(visibleSize.width/2,70)); 
+		auto ac1=Show::create();
+		auto ac2=FadeIn::create(1.0f);
+		auto seq=Sequence::create(ac1,ac2,NULL);
+		fighter->runAction(seq);
 	
 	}
 
@@ -316,5 +351,54 @@ void GamePlayerLayer::menuResumeCallback(Ref* pSender)
 		node->resume();
 	}
 	removeChild(menu);
+
+}
+
+void GamePlayerLayer::updateStatusBarFighter()
+{
+	Size visibleSize=Director::getInstance()->getVisibleSize();
+
+	Node* n1=this->getChildByTag(GameSceneNodeTagStatusBarFighterNode);
+	if(n1)
+	{
+		this->removeChildByTag(GameSceneNodeTagStatusBarFighterNode);
+	}
+
+	Sprite* fg=Sprite::createWithSpriteFrameName("gameplay.life.png");
+	fg->setPosition(Vec2(visibleSize.width-60,visibleSize.height-28));
+	this->addChild(fg,20,GameSceneNodeTagStatusBarFighterNode);
+
+	Node* n2=this->getChildByTag(GameSceneNodeTagStatusBarLifeNode);
+	if(n2)
+	{
+		this->removeChildByTag(GameSceneNodeTagStatusBarLifeNode);
+	}
+	if(this->fighter->getHitPoint()<0)
+	{
+		this->fighter->setHitPoint(0);
+	}
+
+	__String* life=__String::createWithFormat("X %d",this->fighter->getHitPoint()); 
+	auto lblLife=Label::createWithTTF(life->getCString(),"fonts/hanyi.ttf",18);
+	lblLife->setPosition(fg->getPosition()+Vec2(30,0));
+	this->addChild(lblLife,20,GameSceneNodeTagStatusBarLifeNode);
+}
+
+void GamePlayerLayer::updateStatusBarScore()
+{
+	Size visibleSzie=Director::getInstance()->getVisibleSize();
+	Node* n=this->getChildByTag(GameSceneNodeTagStatusBarScore);
+	if(n)
+	{
+		this->removeChildByTag(GameSceneNodeTagStatusBarScore);
+	}
+	if(this->score<0)
+	{
+		this->score=0;
+	}
+	__String* score=__String::createWithFormat("%d",this->score);
+	auto lblString=Label::createWithTTF(score->getCString(),"fonts/hanyi.ttf",18);
+	lblString->setPosition(Vec2(visibleSzie.width/2,visibleSzie.height-28));
+	this->addChild(lblString,20,GameSceneNodeTagStatusBarScore);
 
 }

@@ -22,13 +22,21 @@
 #include "Bullet.h"
 #include "GameOver.h"
 
+typedef enum{
+		EnemyStone_score=5,
+		Enemy1_score=15,
+		Enemy2_score=10,
+		EnemyPlanet_score=20
+}Enemyscores;
+
+
 class GamePlayerLayer : public cocos2d::Layer
 {
 	Fighter* fighter;
 	Menu* menu;
 	EventListenerTouchOneByOne*  touchFighterlistener;
 	EventListenerPhysicsContact* contactListener;
-
+	int score,scorePlaceholder;
 public:
 	static cocos2d::Scene* createScene();
 	virtual bool init();
@@ -44,6 +52,8 @@ public:
 	void menuPauseCallback(cocos2d::Ref* pSender);
 	void menuBackCallback(cocos2d::Ref* pSender);
 	void menuResumeCallback(cocos2d::Ref* pSender);
+	void updateStatusBarFighter();
+	void updateStatusBarScore();
 
 	CREATE_FUNC(GamePlayerLayer);
 
