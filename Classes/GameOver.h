@@ -9,7 +9,7 @@ class GameOver : public cocos2d::Layer
 {
 	int score;
 public:
-	GameOver(int score):score(this->score){};
+	GameOver(int score):score(score){};
 
 	static GameOver* createWithScore(int score);
 	virtual bool init();

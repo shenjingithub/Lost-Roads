@@ -275,13 +275,41 @@ void GamePlayerLayer::handleFighterCollidingWithEnemy(Enemy* enemy)
 		
 			SimpleAudioEngine::getInstance()->playEffect(sound_2);
 		}
+		switch(enemy->getEnemyType())
+		{
+		case EnemyTypeStone:
+			score+=EnemyStone_score;
+			scorePlaceholder+=EnemyStone_score;
+			break;
+		case EnemyTypeEnemy1:
+			score+=Enemy1_score;
+			scorePlaceholder+=Enemy1_score;
+			break;
+		case EnemyTypeEnemy2:
+			score+=Enemy2_score;
+			scorePlaceholder+=Enemy2_score;
+			break;
+		case EnemyTypePlanet:
+			score+=EnemyPlanet_score;
+			scorePlaceholder+=EnemyPlanet_score;
+			break;
+		
+		}
+
+		if(scorePlaceholder>=1000)
+		{
+			fighter->setHitPoint(fighter->getHitPoint()+1);
+			this->updateStatusBarFighter();
+			scorePlaceholder-=1000;
+		}
+		this->updateStatusBarScore();
 		enemy->setVisible(false);
 		enemy->spawn();
 	////////////////
 	
 	if(fighter->getHitPoint()<=0)
 	{
-		auto layer=GameOver::createWithScore(score);
+		auto layer=GameOver::createWithScore(this->score);
 		auto sc=Scene::create();
 		sc->addChild(layer);
 		auto resc=TransitionFade::create(1.0f,sc);
@@ -385,8 +413,8 @@ void GamePlayerLayer::updateStatusBarFighter()
 
 	__String* life=__String::createWithFormat("X %d",this->fighter->getHitPoint()); 
 	auto lblLife=Label::createWithTTF(life->getCString(),"fonts/hanyi.ttf",18);
-	//lblLife->setPosition(fg->getPosition()+Vec2(30,0));
-	lblLife->setPosition(fg->getPosition()+Vec2(10,0));
+	lblLife->setPosition(fg->getPosition()+Vec2(30,0));
+
 	this->addChild(lblLife,20,GameSceneNodeTagStatusBarLifeNode);
 }
 
