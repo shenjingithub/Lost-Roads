@@ -105,6 +105,8 @@ void GamePlayerLayer::onEnter()
 	fighter->setPosition(Vec2(visibleSize.width/2,70));
 	this->addChild(fighter,10,GameSceneNodeTagFighter);
 
+	this->score=0;
+	this->scorePlaceholder=0;
 	this->updateStatusBarFighter();
 	this->updateStatusBarScore();
 	///×¢²á´¥Ãþ·É»úÊÂ¼þ¼àÌýÆ÷
@@ -279,8 +281,11 @@ void GamePlayerLayer::handleFighterCollidingWithEnemy(Enemy* enemy)
 	
 	if(fighter->getHitPoint()<=0)
 	{
-		auto sc=GameOver::createScene();
-		Director::getInstance()->replaceScene(sc);
+		auto layer=GameOver::createWithScore(score);
+		auto sc=Scene::create();
+		sc->addChild(layer);
+		auto resc=TransitionFade::create(1.0f,sc);
+		Director::getInstance()->replaceScene(resc);
 	
 	
 	}
@@ -380,7 +385,8 @@ void GamePlayerLayer::updateStatusBarFighter()
 
 	__String* life=__String::createWithFormat("X %d",this->fighter->getHitPoint()); 
 	auto lblLife=Label::createWithTTF(life->getCString(),"fonts/hanyi.ttf",18);
-	lblLife->setPosition(fg->getPosition()+Vec2(30,0));
+	//lblLife->setPosition(fg->getPosition()+Vec2(30,0));
+	lblLife->setPosition(fg->getPosition()+Vec2(10,0));
 	this->addChild(lblLife,20,GameSceneNodeTagStatusBarLifeNode);
 }
 

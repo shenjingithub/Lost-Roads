@@ -3,13 +3,15 @@
 
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
+#include "MyUtility.h"
 
 class GameOver : public cocos2d::Layer
 {
-
+	int score;
 public:
-	static cocos2d::Scene* createScene();
-	static GameOver* create();
+	GameOver(int score):score(this->score){};
+
+	static GameOver* createWithScore(int score);
 	virtual bool init();
 
 	
